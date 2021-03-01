@@ -738,6 +738,7 @@ decode_iter(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 
     size_t start;
     size_t bytes_processed = 0;
+    int make_object_result;
 
     if(!enif_inspect_binary(env, argv[0], &bin)) {
         return enif_make_badarg(env);
@@ -995,8 +996,12 @@ decode_iter(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
                             goto done;
                         }
                         dec_pop_assert(d, st_value);
-                        if(!make_object(env, curr, &val,
-                                d->return_maps, d->dedupe_keys, d->error_on_duplicate_key)) {
+                        make_object_result = make_object(env, curr, &val, d->return_maps, d->dedupe_keys, d->error_on_duplicate_key);
+                        if(make_object_result == -1) {
+                            ret = dec_error(d, "duplicate_keys");
+                            goto done;
+                        }
+                        if(make_object_result == 0) {
                             ret = dec_error(d, "internal_object_error");
                             goto done;
                         }
