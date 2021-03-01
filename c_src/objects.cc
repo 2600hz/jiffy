@@ -42,7 +42,7 @@ make_object(ErlNifEnv* env, ERL_NIF_TERM pairs, ERL_NIF_TERM* out,
                     return 0;
                 }
             } else if (error_on_duplicate_key) {
-                return 0;
+                return -1;
             }
         }
         *out = ret;
@@ -66,7 +66,7 @@ make_object(ErlNifEnv* env, ERL_NIF_TERM pairs, ERL_NIF_TERM* out,
                 val = enif_make_tuple2(env, key, val);
                 ret = enif_make_list_cell(env, val, ret);
             } else if (error_on_duplicate_key) {
-                return 0;
+                return -1;
             }
         } else {
             val = enif_make_tuple2(env, key, val);
